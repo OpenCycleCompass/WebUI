@@ -1,5 +1,7 @@
 $.ajaxSetup({'async': false});
 
+var api_baseurl = "https://ibis.jufo.mytfg.de/api1/";
+
 $( document ).ready( function() {
 	setTrackSelectOptions($("#track_select_num").val());
 
@@ -7,7 +9,7 @@ $( document ).ready( function() {
 	setProfileOptions();
 
 	// admin
-	$.getJSON("api1/login.php?status", function(json) {
+	$.getJSON(api_baseurl + "login.php?status", function(json) {
 		if(json.status=="ok") {
 			postLogin();
 		} else {
@@ -37,7 +39,7 @@ function postLogout() {
 }
 
 function deleteTracks() {
-	var url = "api1/deletetrack.php?deletetrack&track_ids=";
+	var url = api_baseurl + "deletetrack.php?deletetrack&track_ids=";
 	$('#admin_delete_select option:selected').each(function() {
 		url += $(this).val() + ";";
 	});
@@ -58,7 +60,7 @@ function deleteTracks() {
 }
 
 function loginUser() {
-	var url = "api1/login.php?login&user="+$("#login_user").val()+"&password="+$("#login_pw").val();
+	var url = api_baseurl + "login.php?login&user="+$("#login_user").val()+"&password="+$("#login_pw").val();
 	$.getJSON(url, function(json) {
 		if(json.error){
 			postLogout();
@@ -73,7 +75,7 @@ function loginUser() {
 }
 
 function logoutUser() {
-	$.getJSON("api1/login.php?signout", function(json) {
+	$.getJSON(api_baseurl + "login.php?signout", function(json) {
 		if(json.error){
 			postLogout();
 			alert("Fehler: "+json.error);
@@ -105,7 +107,7 @@ $("#admin_delete_num_form").submit( function () {
 });
 
 function setTrackSelectOptions(num) {
-	var options_uri = "api1/gettrack.php?tracklist=tracklist&num=" + num + userTokenParam();
+	var options_uri = api_baseurl + "gettrack.php?tracklist=tracklist&num=" + num + userTokenParam();
 	$.getJSON(options_uri, function (json) {
 		var options = "";
 		for (var i = 0; i< json.length; i++) {
@@ -114,7 +116,7 @@ function setTrackSelectOptions(num) {
 		$('#track_select').find("option").remove().end()
 		.append(options);
 	});
-	var num_uri = "api1/gettrack.php?tracknum=tracknum" + userTokenParam();
+	var num_uri = api_baseurl + "gettrack.php?tracknum=tracknum" + userTokenParam();
 	$.getJSON(num_uri, function (json) {
 		$('#track_select_num_p').replaceWith("<p id=\"track_select_num_p\">Es sind " + json.num + " Tracks vorhanden.</p>");
 		var options = "";
@@ -129,7 +131,7 @@ function setTrackSelectOptions(num) {
 }
 
 function setAdminDeleteOptions(num) {
-	var options_uri = "api1/gettrack.php?tracklist=tracklist&num=" + num;
+	var options_uri = api_baseurl + "gettrack.php?tracklist=tracklist&num=" + num;
 	$.getJSON(options_uri, function (json) {
 		var options = "";
 		for (var i = 0; i< json.length; i++) {
@@ -138,7 +140,7 @@ function setAdminDeleteOptions(num) {
 		$('#admin_delete_select').find("option").remove().end()
 		.append(options);
 	});
-	var num_uri = "api1/gettrack.php?tracknum=tracknum";
+	var num_uri = api_baseurl + "gettrack.php?tracknum=tracknum";
 	$.getJSON(num_uri, function (json) {
 		$('#admin_delete_num_p').replaceWith("<p id=\"admin_delete_num_p\">Es sind " + json.num + " Tracks vorhanden.</p>");
 		var options = "";
@@ -153,7 +155,7 @@ function setAdminDeleteOptions(num) {
 }
 
 function setProfileOptions() {
-	var options_uri = "api1/updatecost.php?getprofiles";
+	var options_uri = api_baseurl + "updatecost.php?getprofiles";
 	$.getJSON(options_uri, function (json) {
 		var options = "";
 		for (var key in json) {
@@ -436,7 +438,7 @@ $( "#show_track" ).submit(function( event ) {
 	lons = [];
 	// Draw ploylines for any sleected track
 	$('#track_select option:selected').each(function() {
-		drawColorPolyline("api1/gettrack.php?gettrack=gettrack&track_id=" + $(this).val());
+		drawColorPolyline(api_baseurl + "gettrack.php?gettrack=gettrack&track_id=" + $(this).val());
 	});
 	$('#track_select option:selected').promise().done(function() {
 		var latSouth = Math.max.apply(Math, lats);
@@ -465,7 +467,7 @@ $( "#generate_route" ).submit(function( event ) {
 		optimize = "&optimize=1";
 	}
 	// draw polyline for route
-	drawPolyline( "api1/getroute.php?getroute=getroute"
+	drawPolyline(api_baseurl + "getroute.php?getroute=getroute"
 		+"&start_lat="+$("#start_lat").val()
 		+"&start_lon="+$("#start_lon").val()
 		+"&end_lat="+$("#end_lat").val()
@@ -493,7 +495,7 @@ $( "#generate_route_2" ).submit(function( event ) {
 		optimize = "&optimize=1";
 	}
 	// draw polyline for route
-	drawPolyline( "api1/getroute.php?getroute=getroute"
+	drawPolyline(api_baseurl + "getroute.php?getroute=getroute"
 		+"&start="+$("#start").val()
 		+"&end="+$("#end").val()
 		+"&profile="+$("#route_profile_address").val()
@@ -514,7 +516,7 @@ $( "#showedges_simple" ).submit(function( event ) {
 	// Get Bound of current leaflet map:
 	var bounds = map.getBounds();
 	// draw polyline for every edge
-	drawMultiPolyline( "api1/gettopo.php?getedges=getedges"
+	drawMultiPolyline(api_baseurl + "gettopo.php?getedges=getedges"
 		+"&start_lat="+bounds.getNorth()
 		+"&start_lon="+bounds.getWest()
 		+"&end_lat="+bounds.getSouth()
@@ -530,7 +532,7 @@ $( "#showedges_staticcost" ).submit(function( event ) {
 	// Get Bound of current leaflet map:
 	var bounds = map.getBounds();
 	// draw polyline for every edge
-	drawMultiColorPolyline( "api1/gettopo.php?getedges=getedges&cost=static"
+	drawMultiColorPolyline(api_baseurl + "gettopo.php?getedges=getedges&cost=static"
 		+"&profile="+$("#showedges_staticcost_profile").val()
 		+"&start_lat="+bounds.getNorth()
 		+"&start_lon="+bounds.getWest()
@@ -547,7 +549,7 @@ $( "#showedges_dyncost" ).submit(function( event ) {
 	// Get Bound of current leaflet map:
 	var bounds = map.getBounds();
 	// draw polyline for every edge
-	drawMultiColorPolyline( "api1/gettopo.php?getedges=getedges&cost=dynamic"
+	drawMultiColorPolyline(api_baseurl + "gettopo.php?getedges=getedges&cost=dynamic"
 		+"&start_lat="+bounds.getNorth()
 		+"&start_lon="+bounds.getWest()
 		+"&end_lat="+bounds.getSouth()
@@ -564,10 +566,10 @@ $( "#cleanmap_form" ).submit(function( event ) {
 
 $( "#profile_select_form" ).submit(function( event ) {
 	// Check if user is authenticated
-	$.getJSON("api1/login.php?status", function(json) {
+	$.getJSON(api_baseurl + "login.php?status", function(json) {
 		if(json.status == "ok") {
 			// Load profile
-			$.getJSON("api1/profiles.php?profile="+$("#profile_select").val(), function(json) {
+			$.getJSON(api_baseurl + "profiles.php?profile="+$("#profile_select").val(), function(json) {
 				if(json.name && json.entries) {
 					$("#profile_content").html("<h3>Profil: " + json.name + "</h3>"
 					+ '<form id="profile_update_form"><table id="profile_update_form_table">'
@@ -600,7 +602,7 @@ $( "#profile_select_form" ).submit(function( event ) {
 });
 
 function updateProfile(event) {
-	var url = "api1/updatecost.php?profile="+$("#profile_profile").val();
+	var url = api_baseurl + "updatecost.php?profile="+$("#profile_profile").val();
 	$("#profile_update_form .cost").each(function(){
 		url += "&" + $(this).attr("id") + "=" + $(this).val();
 	});
