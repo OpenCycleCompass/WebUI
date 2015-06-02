@@ -14,7 +14,7 @@ $( document ).ready( function() {
 			postLogout();
 		}
 	});
-	
+
 });
 
 function postLogin() {
@@ -86,6 +86,16 @@ function logoutUser() {
 	});
 }
 
+function userTokenParam() {
+	var url_token = document.URL.split('#token(');
+	//var token_array = token_str[token_str.length-1].split(';');
+	if(url_token[1]) {
+		var token = url_token[1].substring(0, url_token[1].indexOf(')'))
+		return "&user_token=" + token;
+	}
+	return "";
+}
+
 $("#track_select_num_form").submit( function () {
 	setTrackSelectOptions($("#track_select_num").val());
 });
@@ -95,7 +105,7 @@ $("#admin_delete_num_form").submit( function () {
 });
 
 function setTrackSelectOptions(num) {
-	var options_uri = "api1/gettrack.php?tracklist=tracklist&num=" + num;
+	var options_uri = "api1/gettrack.php?tracklist=tracklist&num=" + num + userTokenParam();
 	$.getJSON(options_uri, function (json) {
 		var options = "";
 		for (var i = 0; i< json.length; i++) {
@@ -104,7 +114,7 @@ function setTrackSelectOptions(num) {
 		$('#track_select').find("option").remove().end()
 		.append(options);
 	});
-	var num_uri = "api1/gettrack.php?tracknum=tracknum";
+	var num_uri = "api1/gettrack.php?tracknum=tracknum" + userTokenParam();
 	$.getJSON(num_uri, function (json) {
 		$('#track_select_num_p').replaceWith("<p id=\"track_select_num_p\">Es sind " + json.num + " Tracks vorhanden.</p>");
 		var options = "";
