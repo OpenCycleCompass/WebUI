@@ -1,13 +1,9 @@
-//$.ajaxSetup({'async': false});
-
 var api_baseurl = "https://ibis.jufo.mytfg.de/api1/";
 
 $( document ).ready( function() {
 	setTrackSelectOptions($("#track_select_num").val());
-
 	// Set profile select options
 	setProfileOptions();
-
 	// admin
 	$.getJSON(api_baseurl + "login.php?status", function(json) {
 		if(json.status=="ok") {
@@ -16,7 +12,6 @@ $( document ).ready( function() {
 			postLogout();
 		}
 	});
-
 });
 
 function postLogin() {
@@ -46,7 +41,6 @@ function deleteTracks() {
 	$('#admin_delete_select option:selected').each(function() {
 		url += $(this).val() + ";";
 	});
-	
 	$.getJSON(url, function(json) {
 		if(json.error){
 			alert("Fehler: "+json.error);
@@ -55,7 +49,6 @@ function deleteTracks() {
 		} else {
 			alert("Unknown error");
 		}
-		
 		// refresh admin and tracks pane
 		setAdminDeleteOptions($("#admin_delete_num").val());
 		setTrackSelectOptions($("#track_select_num").val());
@@ -177,15 +170,12 @@ function setProfileOptions() {
 
 // extend the default marker class (custon icon)
 var StartIcon = L.Icon.Default.extend({
-options: {
-		//iconUrl: 'leaflet/marker-start.png'
-}
 });
 var startIcon = new StartIcon();
 
 var DestIcon = L.Icon.Default.extend({
 options: {
-		iconUrl: 'leaflet/images/dest-Pin-2x.png'
+	iconUrl: 'leaflet/images/dest-Pin-2x.png'
 }
 });
 var destIcon = new DestIcon();
@@ -194,34 +184,14 @@ function setStart(e) {
 	$("#start_lat").val(e.latlng.lat);
 	$("#start_lon").val(e.latlng.lng);
 	startMark.setLatLng(e.latlng).bindPopup("Start (" + e.latlng.toString() + ")").update();
-	/*popup_start
-		.setLatLng(e.latlng)
-		.setContent("Start at " + e.latlng.toString())
-		.openOn(map);*/
 }
 
 function setDest(e) {
 	$("#end_lat").val(e.latlng.lat);
 	$("#end_lon").val(e.latlng.lng);
 	destMark.setLatLng(e.latlng).bindPopup("Ziel (" + e.latlng.toString() + ")").update();
-	/*popup_end
-		.setLatLng(e.latlng)
-		.setContent("End at " + e.latlng.toString())
-		.openOn(map);*/
 }
 
-function onMapClick(e) {
-	if(clickTyp == 0){
-		setStart(e);
-		clickTyp = clickTyp+1;
-	} else if(clickTyp == 1){
-		setDest(e);
-		clickTyp = clickTyp+1;
-	} else if(clickTyp >= 2){
-		clickTyp = 0;
-	}
-}
-	
 function drawPolyline(urlJsonData, zoomToBounds){
 	// Get points of selected track an show it on map
 	// Create array of lat,lon points
@@ -261,7 +231,7 @@ function drawPolyline(urlJsonData, zoomToBounds){
 		}
 	});
 }
-	
+
 function drawMultiPolyline(urlJsonData){
 	// Get points of selected track an show it on map
 	// Create array of lat,lon points
@@ -276,11 +246,6 @@ function drawMultiPolyline(urlJsonData){
 			// create a red polyline from an array of LatLng points
 			var polyline = L.polyline(line_points, {color: 'blue'}).addTo(map);
 			// Polylines should be inside current bounds
-			/* // add lat and lon to array:
-			lats.push(polyline.getBounds().getSouth());
-			lats.push(polyline.getBounds().getNorth());
-			lons.push(polyline.getBounds().getWest());
-			lons.push(polyline.getBounds().getEast()); */
 		}
 	});
 }
@@ -361,16 +326,13 @@ function drawMultiColorPolyline(urlJsonData){
 	$.getJSON(urlJsonData, function (json) {
 		for (var j = 0; j < json.length-1; j++) {
 			line_points = [];
-			
 			var cost = 100000;
-			
 			for (var i = 0; i < json[j].length; i++) {
 				if (json[j][i].cost)
 					cost = parseFloat(json[j][i].cost);
 				if (json[j][i].lat)
 					line_points.push(L.latLng(parseFloat(json[j][i].lat), parseFloat(json[j][i].lon)));
 			}
-			
 			// Color of line dependung on Speed
 			var color;
 			if(cost<0.55) {
@@ -394,7 +356,6 @@ function drawMultiColorPolyline(urlJsonData){
 			} else {
 				color = "#000000";
 			}
-			
 			// create a red polyline from an array of LatLng points
 			var polyline = L.polyline(line_points, {color: color}).addTo(map);
 		}
@@ -418,7 +379,6 @@ var map = L.map('map', {
 		contextmenuWidth: 120,
 		contextmenuItems: [{
 			text: 'Startpunkt setzen',
-			//icon: 'images/zoom-in.png',
 			callback: setStart
 		}, {
 			text: 'Ziel setzen',
@@ -426,14 +386,14 @@ var map = L.map('map', {
 		}]
 	});
 
-map.setView([50, 7], 7);
-
-// http://{s}.tile.thunderforest.com/cycle (OpenCycleMap) ist leider nicht über https verfügbar
-// -> leider MixedContent 
+// http://{s}.tile.thunderforest.com/cycle (OpenCycleMap) ist leider nicht kostenfrei
+// über https verfügbar, daher leider MixedContent
 L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
 //L.tileLayer('https://tiles.rleh.de/tiles/thunderforest/{z}/{x}/{y}.png', {
 	maxZoom: 18
 }).addTo(map);
+
+map.setView([50, 7], 7);
 
 navigator.geolocation.getCurrentPosition( function GetLocation(location) {
 	map.panTo([location.coords.latitude, location.coords.longitude]);
@@ -442,8 +402,6 @@ navigator.geolocation.getCurrentPosition( function GetLocation(location) {
 
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 
-
-var clickTyp = 0;
 var popup_start = L.popup();
 var popup_end = L.popup();
 
@@ -453,8 +411,6 @@ var track_count;
 
 var startMark = L.marker([0, 0], {icon: startIcon}).addTo(map);
 var destMark = L.marker([0, 0], {icon: destIcon}).addTo(map);
-
-map.on('click', onMapClick);
 
 $( "#show_track" ).submit(function( event ) {
 	// Remove all polylines
@@ -467,15 +423,6 @@ $( "#show_track" ).submit(function( event ) {
 	tracks.each(function() {
 		drawColorPolyline(api_baseurl + "gettrack.php?gettrack=gettrack&track_id=" + $(this).val());
 	});
-	/*tracks.promise().done(function() {
-		var latSouth = Math.max.apply(Math, lats);
-		var latNorth = Math.min.apply(Math, lats);
-		var lngWest = Math.max.apply(Math, lons);
-		var lngEast = Math.min.apply(Math, lons);
-		var southWest = L.latLng(latSouth, lngWest);
-		var northEast = L.latLng(latNorth, lngEast);
-		map.fitBounds(L.latLngBounds(southWest, northEast));
-	}); */
 	// prevent reload
 	event.preventDefault();
 	if (!(window.matchMedia('(min-width: 768px)').matches)) {
