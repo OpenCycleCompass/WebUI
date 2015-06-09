@@ -1,4 +1,4 @@
-$.ajaxSetup({'async': false});
+//$.ajaxSetup({'async': false});
 
 var api_baseurl = "https://ibis.jufo.mytfg.de/api1/";
 
@@ -222,7 +222,7 @@ function onMapClick(e) {
 	}
 }
 	
-function drawPolyline(urlJsonData){
+function drawPolyline(urlJsonData, zoomToBounds){
 	// Get points of selected track an show it on map
 	// Create array of lat,lon points
 	var line_points = [];
@@ -249,6 +249,15 @@ function drawPolyline(urlJsonData){
 				// Display distance in m without any decimal places
 				alert("Länge der Route beträgt: "+Math.round(json.distance)+" Meter.");
 			}
+		}
+		if(zoomToBounds) {
+			var latSouth = Math.max.apply(Math, lats);
+			var latNorth = Math.min.apply(Math, lats);
+			var lngWest = Math.max.apply(Math, lons);
+			var lngEast = Math.min.apply(Math, lons);
+			var southWest = L.latLng(latSouth, lngWest);
+			var northEast = L.latLng(latNorth, lngEast);
+			map.fitBounds(L.latLngBounds(southWest, northEast));
 		}
 	});
 }
@@ -332,6 +341,18 @@ function drawColorPolyline(urlJsonData){
 			lats.push(polyline.getBounds().getNorth());
 			lons.push(polyline.getBounds().getWest());
 			lons.push(polyline.getBounds().getEast());
+		}
+		if(track_count) {
+			track_count--;
+		}
+		if(track_count===0) {
+			var latSouth = Math.max.apply(Math, lats);
+			var latNorth = Math.min.apply(Math, lats);
+			var lngWest = Math.max.apply(Math, lons);
+			var lngEast = Math.min.apply(Math, lons);
+			var southWest = L.latLng(latSouth, lngWest);
+			var northEast = L.latLng(latNorth, lngEast);
+			map.fitBounds(L.latLngBounds(southWest, northEast));
 		}
 	});
 }
@@ -428,6 +449,7 @@ var popup_end = L.popup();
 
 var lats = [];
 var lons = [];
+var track_count;
 
 var startMark = L.marker([0, 0], {icon: startIcon}).addTo(map);
 var destMark = L.marker([0, 0], {icon: destIcon}).addTo(map);
@@ -440,10 +462,12 @@ $( "#show_track" ).submit(function( event ) {
 	lats = [];
 	lons = [];
 	// Draw ploylines for any sleected track
-	$('#track_select option:selected').each(function() {
+	var tracks = $('#track_select option:selected');
+	track_count = tracks.length;
+	tracks.each(function() {
 		drawColorPolyline(api_baseurl + "gettrack.php?gettrack=gettrack&track_id=" + $(this).val());
 	});
-	$('#track_select option:selected').promise().done(function() {
+	/*tracks.promise().done(function() {
 		var latSouth = Math.max.apply(Math, lats);
 		var latNorth = Math.min.apply(Math, lats);
 		var lngWest = Math.max.apply(Math, lons);
@@ -451,7 +475,7 @@ $( "#show_track" ).submit(function( event ) {
 		var southWest = L.latLng(latSouth, lngWest);
 		var northEast = L.latLng(latNorth, lngEast);
 		map.fitBounds(L.latLngBounds(southWest, northEast));
-	});
+	}); */
 	// prevent reload
 	event.preventDefault();
 	if (!(window.matchMedia('(min-width: 768px)').matches)) {
@@ -476,15 +500,7 @@ $( "#generate_route" ).submit(function( event ) {
 		+"&end_lat="+$("#end_lat").val()
 		+"&end_lon="+$("#end_lon").val()
 		+"&profile="+$("#route_profile_latlon").val()
-		+optimize);
-	// prevent reload
-	var latSouth = Math.max.apply(Math, lats);
-	var latNorth = Math.min.apply(Math, lats);
-	var lngWest = Math.max.apply(Math, lons);
-	var lngEast = Math.min.apply(Math, lons);
-	var southWest = L.latLng(latSouth, lngWest);
-	var northEast = L.latLng(latNorth, lngEast);
-	map.fitBounds(L.latLngBounds(southWest, northEast));
+		+optimize, true);
 });
 
 $( "#generate_route_2" ).submit(function( event ) {
@@ -502,15 +518,7 @@ $( "#generate_route_2" ).submit(function( event ) {
 		+"&start="+$("#start").val()
 		+"&end="+$("#end").val()
 		+"&profile="+$("#route_profile_address").val()
-		+optimize);
-	// prevent reload
-	var latSouth = Math.max.apply(Math, lats);
-	var latNorth = Math.min.apply(Math, lats);
-	var lngWest = Math.max.apply(Math, lons);
-	var lngEast = Math.min.apply(Math, lons);
-	var southWest = L.latLng(latSouth, lngWest);
-	var northEast = L.latLng(latNorth, lngEast);
-	map.fitBounds(L.latLngBounds(southWest, northEast));
+		+optimize, true);
 });
 
 $( "#showedges_simple" ).submit(function( event ) {
