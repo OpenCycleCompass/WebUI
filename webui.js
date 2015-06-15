@@ -21,6 +21,7 @@ function postLogin() {
 	$("#admin_content_authuser").show();
 	$("#profile_content_noauth").hide();
 	$("#profile_content_authuser").show();
+	$(".admin_pane_item").show();
 	setAdminDeleteOptions($("#admin_delete_num").val());
 	setTrackSelectOptions($("#track_select_num").val());
 }
@@ -32,6 +33,7 @@ function postLogout() {
 	$("#admin_content_noauth").show();
 	$("#profile_content_authuser").hide();
 	$("#profile_content_noauth").show();
+	$(".admin_pane_item").hide();
 	setAdminDeleteOptions($("#admin_delete_num").val());
 	setTrackSelectOptions($("#track_select_num").val());
 }
