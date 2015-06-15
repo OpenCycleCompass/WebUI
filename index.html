@@ -10,10 +10,12 @@
 	href="leaflet/leaflet.css" />
 <link rel="stylesheet" href="leaflet-sidebar-v2/leaflet-sidebar.min.css" />
 <link rel="stylesheet" href="leaflet-contextmenu/leaflet.contextmenu.css" />
-<script type="text/javascript" src="jquery/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="jquery-ui/jquery-ui.min.css" />
+<script type="text/javascript" src="jquery/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="leaflet/leaflet.js"></script>
 <script type="text/javascript" src="leaflet-sidebar-v2/leaflet-sidebar.min.js"></script>
 <script type="text/javascript" src="leaflet-contextmenu/leaflet.contextmenu.js"></script>
+<script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
 <style>
 	body {
 		padding: 0;
@@ -124,8 +126,7 @@
 				<h1>iBis Administration</h1>
 				<div id="admin_content_authuser" style="display: none">
 					<form id="admin_delete_form" onsubmit="deleteTracks()" action="#">
-						<label for="admin_delete_select">Track(s) löschen</label>
-						<br />
+						<label for="admin_delete_select"><h2>Track(s) löschen</h2></label>
 						<select id="admin_delete_select" multiple="multiple" size="25" style="overflow: hidden; width: 100%;">
 
 						</select>
@@ -141,6 +142,19 @@
 						</select>
 						<input type="submit" value="Wechseln">
 					</form>
+					<hr />
+					<h2>Dynamische Kosten</h2>
+					<p>Es sind <span class="processtrack_numtrack">unbekannt viele</span> viele Tracks vorhanden.
+					<br />Es sind dynamische Kosten für <span id="processtrack_numseg">unbekannt viele</span> Wegsegmente in der Datenbank vorhanden.<br />
+					<button type="button" onclick="refreshDyncostNums()">Aktualisieren</button></p>
+					<button type="button" onclick="deleteDyncost()">Dynamische Kosten Löschen</button>
+					<button type="button" onclick="calculateDyncost()">Dynamische Kosten Neu Berechnen</button>
+					<br />
+					<div id="processtrack_progress" style="display: none;">
+						<div id="processtrack_progressbar"></div>
+						<p><span id="processtrack_numtrack_processed">0</span> von <span class="processtrack_numtrack">unbekannt vielen</span> Tracks verarbeitet.
+						<br /><span id="processtrack_numtrack_failed">0</span> Fehler.</p>
+					</div>
 				</div>
 				<div id="admin_content_noauth">
 					<h3>Bitte zuerst Anmelden</h3>

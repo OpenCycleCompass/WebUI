@@ -24,6 +24,7 @@ function postLogin() {
 	$(".admin_pane_item").show();
 	setAdminDeleteOptions($("#admin_delete_num").val());
 	setTrackSelectOptions($("#track_select_num").val());
+	refreshDyncostNums();
 }
 
 function postLogout() {
@@ -36,6 +37,98 @@ function postLogout() {
 	$(".admin_pane_item").hide();
 	setAdminDeleteOptions($("#admin_delete_num").val());
 	setTrackSelectOptions($("#track_select_num").val());
+}
+
+var calculateDyncostErrorCount = 0;
+var calculateDyncostSuccessCount = 0;
+var calculateDyncostTracknum = 0;
+
+function refreshDyncostNums() {
+	$.getJSON(api_baseurl + "processtrack.php?numseg", function(json) {
+		if(json.hasOwnProperty("numseg")) {
+			$("#processtrack_numseg").html(json.numseg);
+		} else if(json.error){
+			alert("Error: "+json.error);
+		} else {
+			alert("Unknown error");
+		}
+	});
+	$.getJSON(api_baseurl + "gettrack.php?tracknum", function(json) {
+		if(json.hasOwnProperty("num")) {
+			$(".processtrack_numtrack").html(json.num);
+			calculateDyncostTracknum = parseInt(json.num);
+		} else if(json.error){
+			alert("Error: "+json.error);
+		} else {
+			alert("Unknown error");
+		}
+	});
+}
+
+function deleteDyncost() {
+	if(confirm("Sind Sie sicher, dass alle dynamischen Kosten aus der Datenbank gelöscht werden sollen?"
+		+ " Dies kann nicht rückgängig gemacht werden.")) {
+		$.getJSON(api_baseurl + "processtrack.php?clear", function(json) {
+			if(json.hasOwnProperty("success")) {
+				alert("Success: "+json.success);
+			} else {
+				alert("Error: "+json.error);
+			}
+			refreshDyncostNums();
+		});
+	}
+}
+
+function calculateDyncostTrack(track_array, i) {
+	$.getJSON(api_baseurl + "processtrack.php?track_id=" + track_array[i].track_id, function(json) {
+		if(json.error) {
+			// increase error counter and display
+			calculateDyncostErrorCount++;
+			$("#processtrack_numtrack_failed").html(calculateDyncostErrorCount);
+			// log to JS console
+			console.log("#"+i+" ("+json.track_id+"): Error ("+json.error+"; "+json.executiontime+"s");
+		}
+		else {
+			// increase success counter
+			calculateDyncostSuccessCount++;
+			// log to JS console
+			console.log("#"+i+" ("+json.track_id+"): Erfolg ("+json.nodes+" Nodes; "+json.matchedways_return.rows_matchedways+" matched; "+json.executiontime+"s");
+		}
+		// update progress text
+		$("#processtrack_numtrack_processed").html((calculateDyncostTracknum - i));
+		// update progress bar
+		$("#processtrack_progressbar").progressbar("value", (100*((calculateDyncostTracknum - i) / calculateDyncostTracknum)));
+		if(i>0) {
+			calculateDyncostTrack(track_array, i-1);
+		}
+		else {
+			alert("Fertig!");
+			refreshDyncostNums();
+		}
+	});
+}
+
+function calculateDyncost() {
+	if(confirm("Sind Sie sicher, dass alle dynamischen Kosten aus den Tracks neu berechnet werden sollen?"
+		+ " Dies kann längere Zeit in Anspruch nehmen.")) {
+		$.getJSON(api_baseurl + "gettrack.php?tracklist&raw", function(json) {
+			if(json.hasOwnProperty("error")) {
+				alert("Error: "+json.error);
+			} else if(json.hasOwnProperty("tracks")) {
+				// initialise vars
+				calculateDyncostErrorCount = 0;
+				calculateDyncostSuccessCount = 0;
+				// reset progress text
+				$("#processtrack_numtrack_processed").html(0);
+				$("#processtrack_numtrack_failed").html(0);
+				// show div containing progress bar and text
+				$("#processtrack_progress").show();
+				$("#processtrack_progressbar").progressbar();
+				// recursively process track by track
+				calculateDyncostTrack(json.tracks, json.tracks.length-1);
+			}
+		});
+	}
 }
 
 function deleteTracks() {
