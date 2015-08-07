@@ -37,7 +37,7 @@
 			<li class="admin_pane_item" style="display: none;"><a href="#admin_pane" role="tab"><i class="fa fa-cogs"></i></a></li>
 			<li class="admin_pane_item" style="display: none;"><a href="#profile_pane" role="tab"><i class="fa fa-area-chart"></i></a></li>
 			<li><a href="#login_pane" role="tab"><i class="fa fa-sign-in"></i></a></li>
-			<li><a href="#cleanmap_pane" role="tab"><i class="fa fa-eraser"></i></a></li>
+			<li><a href="#map_pane" role="tab"><i class="fa fa-map"></i></a></li>
 		</ul>
 		<!-- Tab pane(s) -->
 		<div class="sidebar-content active">
@@ -204,11 +204,22 @@
 				</div>
 			</div>
 
-			<div class="sidebar-pane" id="cleanmap_pane">
-				<h1>iBis Overlays</h1>
+			<div class="sidebar-pane" id="map_pane">
+				<h1>iBis Ansicht</h1>
 				<h3>Alle Overlays entfernen</h3>
 				<form id="cleanmap_form">
 					<input type="submit" value="Entfernen">
+				</form>
+				<hr />
+				<h3>Karte auswählen</h3>
+				<form id="background_map_form"  onsubmit="setMapGUI($('#background_map').val())">
+					<select id="background_map">
+						<option value="opencyclemap" alt="http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png" selected>OpenCycleMap</option>
+						<option value="osm_mapnik" alt="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png">OpenStreetMap Mapnik</option>
+						<option value="opentopomap" alt="http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png">OpenTopoMap</option>
+						<option value="osm_hikebike" alt="https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png">OpenStreetMap Hike & Bike</option>
+					</select>
+					<input type="submit" value="Karte verwenden">
 				</form>
 			</div>
 		</div>
