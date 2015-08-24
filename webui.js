@@ -1,6 +1,11 @@
 var api_baseurl = "https://ibis.jufo.mytfg.de/api1/";
+var user_tokens = "";
 
 $( document ).ready( function() {
+	var url_token = document.URL.split('#token(');
+	if(url_token[1]) {
+		user_tokens = url_token[1].substring(0, url_token[1].indexOf(')'))
+	}
 	setTrackSelectOptions($("#track_select_num").val());
 	// Set profile select options
 	setProfileOptions();
@@ -180,11 +185,8 @@ function logoutUser() {
 }
 
 function userTokenParam() {
-	var url_token = document.URL.split('#token(');
-	//var token_array = token_str[token_str.length-1].split(';');
-	if(url_token[1]) {
-		var token = url_token[1].substring(0, url_token[1].indexOf(')'))
-		return "&user_token=" + token;
+	if(user_tokens) {
+		return "&user_token=" + user_tokens;
 	}
 	return "";
 }
