@@ -485,12 +485,12 @@ var map = L.map('map', {
 
 /*
  * Maps:
- * OpenCycleMap: http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png (max zoom level 18)
+ * OpenCycleMap: https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png (max zoom level 18)
  * OSM Mapnik: https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png (max zoom level 19)
  * OpenTopoMap: http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png (max zoom level 15)
  * OSM Hike & Bike: http://{s}.tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png
  */
-var map_opencyclemap = L.tileLayer("http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png", {maxZoom: 18, attribution: "Maps © <a href=\"http://www.thunderforest.com\">Thunderforest</a>, Data © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap contributors</a>"});
+var map_opencyclemap = L.tileLayer("https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png", {maxZoom: 18, attribution: "Maps © <a href=\"https://www.thunderforest.com\">Thunderforest</a>, Data © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap contributors</a>"});
 var map_osm_mapnik = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "Map Data © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"});
 var map_opentopomap = L.tileLayer("http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {maxZoom: 15, attribution: "Kartendaten: © <a href=\"https://openstreetmap.org/copyright\">OpenStreetMap</a>-Mitwirkende, SRTM | Kartendarstellung: © <a href=\"http://opentopomap.org\">OpenTopoMap</a> (<a href=\"https://creativecommons.org/licenses/by-sa/3.0/\">CC-BY-SA</a>)"});
 var map_osm_hikebike = L.tileLayer("https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png", {maxZoom: 19, attribution: "Map Data © <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"});
